@@ -11,64 +11,96 @@ import java.time.LocalDateTime;
 @Entity
 public class Note {
 
-  @Id
-  @GeneratedValue(strategy=GenerationType.AUTO)
-  private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
-  @Column
-  private LocalDateTime creationDateTime;
+    @Column
+    private LocalDateTime creationDateTime;
 
-  @Column
-  private String entry;
+    @Column
+    private String entry;
 
-  protected Note() {}
+    @Column
+    private String category;
 
-  public Note(LocalDateTime creationDateTime, String entry) {
-      this.creationDateTime = creationDateTime;
-      this.entry = entry;
-  }
+    protected Note() {
+    }
 
+    public Note(String entry, String category, LocalDateTime creationDateTime) {
+        this.entry = entry;
+        this.category = category;
+        this.creationDateTime = creationDateTime;
 
-  public Integer getId() {
-      return id;
-  }
+    }
 
-  public void setId(Integer id) {
-      this.id = id;
-  }
+    public Note(String entry, String category) {
+        this.entry = entry;
+        this.category = category;
+        this.creationDateTime = LocalDateTime.now();
+    }
 
-  public LocalDateTime getCreatedDateTime() {
-      return creationDateTime;
-  }
+    public Note(String entry) {
+        this.entry = entry;
+        this.category = "default";
+        this.creationDateTime = LocalDateTime.now();
+    }
 
-  public void setCreationDateTime(LocalDateTime creationDateTime) {
-      this.creationDateTime = creationDateTime;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public String getEntry() {
-      return entry;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public void setEntry(String entry) {
-      this.entry = entry;
-  }
+    public LocalDateTime getCreatedDateTime() {
+        return creationDateTime;
+    }
 
-  @Override
-  public String toString() {
-      return "note entry: " + entry + "[" + creationDateTime + "]";
-  }
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
 
-  @Override
-  public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+    public String getEntry() {
+        return entry;
+    }
 
-      Note note = (Note) o;
+    public void setEntry(String entry) {
+        this.entry = entry;
+    }
 
-      if (!id.equals(note.id)) return false;
-      if (!creationDateTime.equals(note.creationDateTime)) return false;
-      if (!entry.equals(note.entry)) return false;
+    public String getCategory() {
+        return category;
+    }
 
-      return true;
-  }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    @Override
+    public String toString() {
+        return "note entry: " + entry
+            + "\nnote category: " + category
+            + "\n[" + creationDateTime + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Note note = (Note) o;
+
+        if (!id.equals(note.id))
+            return false;
+        if (!creationDateTime.equals(note.creationDateTime))
+            return false;
+        if (!entry.equals(note.entry))
+            return false;
+
+        return true;
+    }
 }

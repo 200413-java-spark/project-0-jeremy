@@ -34,3 +34,5 @@ build/
 *.class
 *.jar
 *.db
+*.log
+*.gz
