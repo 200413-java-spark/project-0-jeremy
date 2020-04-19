@@ -5,10 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
+@Table(name = "NOTES")
 public class Note {
 
     @Id
@@ -16,13 +21,14 @@ public class Note {
     private Integer id;
 
     @Column
-    private LocalDateTime creationDateTime;
-
-    @Column
     private String entry;
 
     @Column
     private String category;
+
+    @Column
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime creationDateTime;
 
     protected Note() {
     }
@@ -54,14 +60,6 @@ public class Note {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedDateTime() {
-        return creationDateTime;
-    }
-
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-
     public String getEntry() {
         return entry;
     }
@@ -78,11 +76,18 @@ public class Note {
         this.category = category;
     }
 
+    public LocalDateTime getCreatedDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
     @Override
     public String toString() {
-        return "note entry: " + entry
-            + "\nnote category: " + category
-            + "\n[" + creationDateTime + "]";
+        return "note entry: " + entry + "\nnote category: " + category
+            + "\n[" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "]";
     }
 
     @Override
