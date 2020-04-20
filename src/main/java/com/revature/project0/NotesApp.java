@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
 
@@ -39,23 +39,22 @@ public class NotesApp {
 		return (args) -> {
 			if (args.containsOption("add")) {
 				List<String> entries = args.getOptionValues("add");
-				for (String entry : entries) {
-					repo.save(new Note(entry));
-				}
+				entries.forEach((entry) -> repo.save(new Note(entry)));
 			}
 
 			if (args.containsOption("load")) {
-				List<String> files = args.getOptionValues("load");
-				String file = files.get(0);
-
 				ObjectMapper objectMapper = new ObjectMapper();
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				objectMapper.registerModule(new JavaTimeModule());
-				objectMapper.setDateFormat(df);
-
-				List<Note> notes = Arrays.asList(objectMapper.readerFor(Note[].class).readValue(new File(file)));
-				// notes.forEach(System.out::println);
-				notes.forEach((n) -> repo.save(n));
+				
+				List<String> files = args.getOptionValues("load");
+				files.forEach((file) -> {
+					try {
+						List<Note> notes = Arrays.asList(objectMapper.readerFor(Note[].class).readValue(new File(file)));
+						notes.forEach((n) -> repo.save(n));
+					} catch (IOException e) {
+						log.info("Exception occurred: " + e.getMessage());
+					}
+				});
 			}
 
 			if (args.getNonOptionArgs().contains("display")) {
