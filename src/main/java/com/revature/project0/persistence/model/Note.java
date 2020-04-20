@@ -105,6 +105,8 @@ public class Note {
             return false;
         if (!entry.equals(note.entry))
             return false;
+        if (!category.equals(note.category))
+            return false;
 
         return true;
     }

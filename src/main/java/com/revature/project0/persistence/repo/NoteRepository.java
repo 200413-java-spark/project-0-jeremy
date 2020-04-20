@@ -4,6 +4,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.revature.project0.persistence.model.Note;
 
-public interface NoteRepository extends CrudRepository<Note, Long> {
+import java.util.List;
 
+public interface NoteRepository extends CrudRepository<Note, Long> {
+    List<Note> findByCategory(String category);
 }
