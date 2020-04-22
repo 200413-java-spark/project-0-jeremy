@@ -1,0 +1,10 @@
+*.jar
+*.class
+*.db
+*.log
+.project
+.classpath
+
+.settings/
+.vscode/
+target/
