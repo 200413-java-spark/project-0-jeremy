@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ConnectH2 {
+
     public static Connection getConnected () {
         // attempt connection using system properties set by file in classpath
         JdbcDataSource ds = new JdbcDataSource();

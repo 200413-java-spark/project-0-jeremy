@@ -15,7 +15,7 @@ public class Note {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime creationDateTime;
 
-    protected Note() {
+    public Note() {
     }
 
     public Note(String entry, String category, LocalDateTime creationDateTime) {
@@ -61,7 +61,7 @@ public class Note {
         this.category = category;
     }
 
-    public LocalDateTime getCreatedDateTime() {
+    public LocalDateTime getCreationDateTime() {
         return creationDateTime;
     }
 
@@ -74,7 +74,7 @@ public class Note {
         return "note entry: " + entry + "\nnote category: " + category
             + "\n[" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "]";
     }
-
+ 
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -84,8 +84,6 @@ public class Note {
 
         Note note = (Note) o;
 
-        if (!id.equals(note.id))
-            return false;
         if (!creationDateTime.equals(note.creationDateTime))
             return false;
         if (!entry.equals(note.entry))
