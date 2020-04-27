@@ -1,36 +1,29 @@
-package com.revature.project0.persistence.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+package com.revature.jt.project0.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvDate;
 
-@Entity
-@Table(name = "NOTES")
+// basic entity
 public class Note {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @CsvBindByName(required = false)
     private Integer id;
 
-    @Column
+    @CsvBindByName
     private String entry;
-
-    @Column
+    
+    @CsvBindByName
     private String category;
 
-    @Column
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @CsvBindByName
+    @CsvDate("yyyy-MM-dd HH:mm")
     private LocalDateTime creationDateTime;
 
-    protected Note() {
+    public Note() {
     }
 
     public Note(String entry, String category, LocalDateTime creationDateTime) {
@@ -76,7 +69,7 @@ public class Note {
         this.category = category;
     }
 
-    public LocalDateTime getCreatedDateTime() {
+    public LocalDateTime getCreationDateTime() {
         return creationDateTime;
     }
 
@@ -87,9 +80,10 @@ public class Note {
     @Override
     public String toString() {
         return "note entry: " + entry + "\nnote category: " + category
-            + "\n[" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "]";
+            + "\n (" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " | "
+            + id + ")\n";
     }
-
+ 
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -99,8 +93,6 @@ public class Note {
 
         Note note = (Note) o;
 
-        if (!id.equals(note.id))
-            return false;
         if (!creationDateTime.equals(note.creationDateTime))
             return false;
         if (!entry.equals(note.entry))
