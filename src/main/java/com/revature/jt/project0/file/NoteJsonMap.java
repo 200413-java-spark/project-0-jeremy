@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class NoteJsonMap {
     private List<Note> notes;
-    private static final Logger logger = LoggerFactory.getLogger(NoteCsvMap.class);
+    private static final Logger logger = LoggerFactory.getLogger(NoteJsonMap.class);
 
     public NoteJsonMap(String file) {
         ObjectMapper objectMapper = new ObjectMapper();

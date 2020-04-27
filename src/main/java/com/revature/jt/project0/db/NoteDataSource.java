@@ -32,6 +32,7 @@ public class NoteDataSource {
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
+            logger.error("Error connecting to db", e);
             throw new RuntimeException("Error connecting to db ", e);
         }
     }

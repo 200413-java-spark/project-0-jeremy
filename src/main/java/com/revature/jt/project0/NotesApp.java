@@ -107,7 +107,7 @@ public class NotesApp {
             }
             if (line.hasOption("r")) {
                 NoteSQL noteDB = new NoteSQL(ds);
-                System.out.println(noteDB.getAllNotes());
+                noteDB.getAllNotes().forEach(System.out::print);
             }
             if (line.hasOption("nuke")) {
                 Console c = System.console();

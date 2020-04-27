@@ -35,15 +35,16 @@ public class NoteSQL implements NoteDAO<Note> {
         note.setEntry(entryString);
         note.setCategory(rs.getString("category"));
         note.setCreationDateTime(rs.getObject("creationdatetime", LocalDateTime.class));
-        
+
         return note;
     }
 
     @Override
     public Note getNote(Integer id) {
         Note result = new Note();
+        String sql = "SELECT * FROM notes WHERE id=?";
         try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement("SELECT * FROM notes WHERE id=?")) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -59,9 +60,10 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public List<Note> getAllNotes() {
         List<Note> results = new ArrayList<>();
+        String sql = "SELECT * FROM notes";
         try (Connection conn = ds.getConnected();
                 Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM notes")) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Note result = extractNoteFromRS(rs);
                 results.add(result);
@@ -75,9 +77,9 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public List<Note> getNoteByCategory(String category) {
         List<Note> results = new ArrayList<>();
+        String sql = "SELECT * FROM notes WHERE category LIKE ?";
         try (Connection conn = ds.getConnected();
-                PreparedStatement stmt =
-                        conn.prepareStatement("SELECT * FROM notes WHERE category LIKE ?")) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, category);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -94,25 +96,28 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public void insertNote(Note note) {
         if (note.getId() == null) {
+            String sql = "INSERT INTO notes (entry, category, creationdatetime) VALUES (?,?,?)";
             try (Connection conn = ds.getConnected();
-                    PreparedStatement stmt = conn.prepareStatement(
-                            "INSERT INTO notes (entry, category, creationdatetime) VALUES (?,?,?)")) {
+                    PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, note.getEntry());
                 stmt.setString(2, note.getCategory());
                 stmt.setObject(3, note.getCreationDateTime());
                 stmt.executeUpdate();
+                logger.debug("Inserted note");
             } catch (SQLException e) {
                 logger.error("SQL Exception", e);
             }
         } else {
+            String sql =
+                    "INSERT INTO notes (id, entry, category, creationdatetime) VALUES (?,?,?,?)";
             try (Connection conn = ds.getConnected();
-                    PreparedStatement stmt = conn.prepareStatement(
-                            "INSERT INTO notes (id, entry, category, creationdatetime) VALUES (?,?,?,?)")) {
+                    PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, note.getId());
                 stmt.setString(2, note.getEntry());
                 stmt.setString(3, note.getCategory());
                 stmt.setObject(4, note.getCreationDateTime());
                 stmt.executeUpdate();
+                logger.debug("Inserted note");
             } catch (SQLException e) {
                 logger.error("SQL Exception", e);
             }
@@ -121,9 +126,9 @@ public class NoteSQL implements NoteDAO<Note> {
 
     @Override
     public void insertNoteList(List<Note> notes) {
+        String sql = "INSERT INTO notes (entry, category, creationdatetime) VALUES (?,?,?)";
         try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(
-                        "INSERT INTO notes (entry, category, creationdatetime) VALUES (?,?,?)")) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             for (Note note : notes) {
                 stmt.setString(1, note.getEntry());
@@ -134,6 +139,7 @@ public class NoteSQL implements NoteDAO<Note> {
             int n[] = stmt.executeBatch();
             Integer total = Arrays.stream(n).sum();
             System.out.println(total + " records inserted!");
+            logger.debug(total + " records inserted into db");
             conn.commit();
             conn.setAutoCommit(true);
         } catch (SQLException e) {
@@ -143,9 +149,9 @@ public class NoteSQL implements NoteDAO<Note> {
 
     @Override
     public void updateNote(Note note) {
+        String sql = "UPDATE notes SET entry=?, category=?, creationdatetime=? WHERE id=?";
         try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(
-                        "UPDATE notes SET entry=?, category=?, creationdatetime=? WHERE id=?")) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, note.getEntry());
             stmt.setString(2, note.getCategory());
             stmt.setObject(3, note.getCreationDateTime());
@@ -162,8 +168,10 @@ public class NoteSQL implements NoteDAO<Note> {
 
     @Override
     public void deleteNote(Integer id) {
-        try (Connection conn = ds.getConnected(); Statement stmt = conn.createStatement()) {
-            int n = stmt.executeUpdate("DELETE FROM notes WHERE id=" + id);
+        String sql = "DELETE FROM notes WHERE id=?";
+        try (Connection conn = ds.getConnected(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            int n = stmt.executeUpdate();
             if (n == 0) {
                 System.out.println("Entry could not be deleted");
                 logger.debug("Entry could not be deleted");
@@ -175,10 +183,13 @@ public class NoteSQL implements NoteDAO<Note> {
 
     @Override
     public void nuke() {
+        String sql = "DELETE FROM notes";
         try (Connection conn = ds.getConnected(); Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("DELETE FROM notes");
+            stmt.executeUpdate(sql);
         } catch (SQLException e) {
             logger.error("SQL Exception", e);
+        } finally {
+            logger.debug("DB NUKED");
         }
     }
 }

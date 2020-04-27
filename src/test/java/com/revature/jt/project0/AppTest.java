@@ -8,15 +8,11 @@ import com.revature.jt.project0.file.NoteCsvMap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +20,6 @@ public class AppTest {
     private NoteDataSource ds;
 
     @Before
-    @Test
     public void initialize() throws IOException {
         InputStream input = AppTest.class.getClassLoader().getResourceAsStream("app.properties");
         Properties prop = new Properties(System.getProperties());
@@ -35,7 +30,7 @@ public class AppTest {
     }
 
     @Test
-    public void readJson() {
+    public void readJsonToDbTest() {
         NoteJsonMap map = new NoteJsonMap("test.json");
         System.out.println(map.getNotes());
         try {
@@ -50,7 +45,7 @@ public class AppTest {
     }
 
     @Test
-    public void readCsv() {
+    public void readCsvToDbTest() {
         NoteCsvMap map = new NoteCsvMap("test.csv");
         System.out.println(map.getNotes());
         try {
