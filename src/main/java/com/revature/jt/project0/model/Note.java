@@ -1,18 +1,26 @@
-package com.revature.jt.project0;
+package com.revature.jt.project0.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvDate;
 
 // basic entity
 public class Note {
-
+    @CsvBindByName(required = false)
     private Integer id;
+
+    @CsvBindByName
     private String entry;
+    
+    @CsvBindByName
     private String category;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @CsvBindByName
+    @CsvDate("yyyy-MM-dd HH:mm")
     private LocalDateTime creationDateTime;
 
     public Note() {
@@ -72,7 +80,8 @@ public class Note {
     @Override
     public String toString() {
         return "note entry: " + entry + "\nnote category: " + category
-            + "\n[" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "]";
+            + "\n (" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " | "
+            + id + ")\n";
     }
  
     @Override

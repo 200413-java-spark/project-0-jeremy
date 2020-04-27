@@ -1,4 +1,4 @@
-package com.revature.jt.project0;
+package com.revature.jt.project0.db;
 
 import java.util.List;
 
@@ -10,4 +10,5 @@ public interface NoteDAO<N> {
     void insertNoteList(List<N> n);
     void updateNote(N n);
     void deleteNote(Integer id);
+    void nuke();
 }
