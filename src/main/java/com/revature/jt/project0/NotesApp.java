@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Arrays;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -27,7 +28,7 @@ public class NotesApp {
     public static void main(String[] args) {
         // initiate logging
         Logger logger = LoggerFactory.getLogger(NotesApp.class);
-        logger.debug("Initiating...");
+        logger.debug("Initiating logger...");
 
         // get db credentials from classpath
         try (InputStream input =
@@ -118,9 +119,11 @@ public class NotesApp {
                 }
             }
             if (line.getArgs().length != 0) {
-                System.out.println("Unrecognized options: " + line.getArgs());
+                System.out.println("Unrecognized options: " + Arrays.toString(line.getArgs()));
+                logger.debug("Unrecognized options" + Arrays.toString(line.getArgs()));
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             logger.error("invalid arguments passed; ", e);
         } catch (SQLException e) {
             logger.error("SQL Exception", e);

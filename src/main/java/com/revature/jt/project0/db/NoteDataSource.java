@@ -30,11 +30,6 @@ public class NoteDataSource {
 
     public Connection getConnected() {
         try {
-            Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException e) {
-            logger.error("H2 driver not found", e);
-        }
-        try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             throw new RuntimeException("Error connecting to db ", e);

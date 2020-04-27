@@ -27,12 +27,15 @@ public class NoteSQL implements NoteDAO<Note> {
 
     private Note extractNoteFromRS(ResultSet rs) throws SQLException {
         Note note = new Note();
-        note.setId(rs.getInt("id"));
+
         Clob entryClob = rs.getClob("entry");
         String entryString = entryClob.getSubString(1, (int) entryClob.length());
+
+        note.setId(rs.getInt("id"));
         note.setEntry(entryString);
         note.setCategory(rs.getString("category"));
         note.setCreationDateTime(rs.getObject("creationdatetime", LocalDateTime.class));
+        
         return note;
     }
 
@@ -150,6 +153,7 @@ public class NoteSQL implements NoteDAO<Note> {
             int n = stmt.executeUpdate();
             if (n == 0) {
                 System.out.println("DB could not be updated with " + note);
+                logger.debug("DB could not be updated with " + note);
             }
         } catch (SQLException e) {
             logger.error("SQL Exception", e);
@@ -162,6 +166,7 @@ public class NoteSQL implements NoteDAO<Note> {
             int n = stmt.executeUpdate("DELETE FROM notes WHERE id=" + id);
             if (n == 0) {
                 System.out.println("Entry could not be deleted");
+                logger.debug("Entry could not be deleted");
             }
         } catch (SQLException e) {
             logger.error("SQL Exception", e);

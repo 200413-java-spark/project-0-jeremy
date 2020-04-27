@@ -26,7 +26,9 @@ public class NoteJsonMap {
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             notes = Arrays.asList(objectMapper.readerFor(Note[].class).readValue(br));
+            logger.debug("Reading json...");
         } catch (IOException e) {
+            e.printStackTrace();
             logger.error("IOException", e);
         }
     }

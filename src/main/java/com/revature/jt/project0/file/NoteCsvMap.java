@@ -21,8 +21,10 @@ public class NoteCsvMap {
     public NoteCsvMap(String file) {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             notes = new CsvToBeanBuilder(br).withType(Note.class).build().parse();
+            logger.debug("Reading csv...");
         } catch (IOException e) {
-            logger.error("IOException", e);
+            e.printStackTrace();
+            logger.error("CSV IOException", e);
         }
     }
 

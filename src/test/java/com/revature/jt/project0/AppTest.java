@@ -35,41 +35,15 @@ public class AppTest {
     }
 
     @Test
-    public void streamingSum() {
-        int prims[] = {1, 2, 3, 4, 5};
-        Integer addition = Arrays.stream(prims).sum();
-        assertEquals((float) 15, (float) addition, 0);
-    }
-
-    @Test
-    public void connectDb() throws SQLException {
-        Connection conn = ds.getConnected();
-        String productName = conn.getMetaData().getDatabaseProductName();
-
-        assertEquals(productName, "H2");
-    }
-
-    @Test
-    public void addNote() throws SQLException {
-        Note note = new Note("This is a test", "test", LocalDateTime.now());
-        NoteSQL noteDB = new NoteSQL(ds);
-        noteDB.insertNote(note);
-
-        List<Note> retrieved = noteDB.getAllNotes();
-        Note record = retrieved.get(0);
-        assertEquals(note, record);
-    }
-
-    @Test
     public void readJson() {
-        NoteJsonMap map = new NoteJsonMap("notes.json");
+        NoteJsonMap map = new NoteJsonMap("test.json");
         System.out.println(map.getNotes());
         try {
             NoteSQL noteDB = new NoteSQL(ds);
             noteDB.nuke();
             map.saveToDB(ds);
             List<Note> retrieved = noteDB.getAllNotes();
-            System.out.println(retrieved);
+            assertEquals(map.getNotes(), retrieved);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -77,8 +51,17 @@ public class AppTest {
 
     @Test
     public void readCsv() {
-        NoteCsvMap map = new NoteCsvMap("notes.csv");
+        NoteCsvMap map = new NoteCsvMap("test.csv");
         System.out.println(map.getNotes());
+        try {
+            NoteSQL noteDB = new NoteSQL(ds);
+            noteDB.nuke();
+            map.saveToDB(ds);
+            List<Note> retrieved = noteDB.getAllNotes();
+            assertEquals(map.getNotes(), retrieved);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
