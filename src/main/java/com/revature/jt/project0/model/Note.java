@@ -18,9 +18,9 @@ public class Note {
     @CsvBindByName
     private String category;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @CsvBindByName
-    @CsvDate("yyyy-MM-dd HH:mm")
+    @CsvDate("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDateTime;
 
     public Note() {
@@ -79,9 +79,9 @@ public class Note {
 
     @Override
     public String toString() {
-        return "note entry: " + entry + "\nnote category: " + category
-            + "\n (" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " | "
-            + id + ")\n";
+        return "\n[note category: " + category
+            + " (" + creationDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " | "
+            + id + ")]\n" + "> " + entry + "\n";
     }
  
     @Override
