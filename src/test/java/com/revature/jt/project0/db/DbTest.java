@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -33,14 +34,14 @@ public class DbTest {
     }
 
     @Test
-    public void streamingSum() {
+    public void streamingSumTest() {
         int prims[] = {1, 2, 3, 4, 5};
         Integer addition = Arrays.stream(prims).sum();
         assertEquals((float) 15, (float) addition, 0);
     }
 
     @Test
-    public void connectDb() throws SQLException {
+    public void connectDbTest() throws SQLException {
         Connection conn = ds.getConnected();
         String productName = conn.getMetaData().getDatabaseProductName();
 
@@ -48,7 +49,7 @@ public class DbTest {
     }
 
     @Test
-    public void addNote() throws SQLException {
+    public void addNoteTest() throws SQLException {
         Note note = new Note("This is a test", "test", LocalDateTime.now());
         NoteSQL noteDB = new NoteSQL(ds);
         noteDB.nuke();
@@ -57,6 +58,20 @@ public class DbTest {
         List<Note> retrieved = noteDB.getAllNotes();
         Note record = retrieved.get(0);
         assertEquals(note, record);
+    }
+
+    @Test
+    public void getLatestTest() throws SQLException {
+        List<Note> notes = new ArrayList<>();
+        notes.add(new Note("This is a test", "test", LocalDateTime.now()));
+        notes.add(new Note("This is a test", "test", LocalDateTime.now()));
+        notes.add(new Note("This is a test", "test", LocalDateTime.now()));
+        NoteSQL noteDB = new NoteSQL(ds);
+        noteDB.nuke();
+        noteDB.insertNoteList(notes);
+
+        List<Note> retrieved = noteDB.getLatest(50);
+        assertEquals(notes.size(), retrieved.size());
     }
 
 

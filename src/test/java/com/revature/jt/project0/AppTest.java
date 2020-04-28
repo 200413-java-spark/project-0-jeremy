@@ -3,8 +3,9 @@ package com.revature.jt.project0;
 import com.revature.jt.project0.model.Note;
 import com.revature.jt.project0.db.NoteDataSource;
 import com.revature.jt.project0.db.NoteSQL;
-import com.revature.jt.project0.file.NoteJsonMap;
-import com.revature.jt.project0.file.NoteCsvMap;
+import com.revature.jt.project0.file.CsvLoader;
+import com.revature.jt.project0.file.FileLoader;
+import com.revature.jt.project0.file.JsonLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,14 +32,14 @@ public class AppTest {
 
     @Test
     public void readJsonToDbTest() {
-        NoteJsonMap map = new NoteJsonMap("test.json");
-        System.out.println(map.getNotes());
+        FileLoader loader = new JsonLoader("test.json");
+        System.out.println(loader.getNotes());
         try {
             NoteSQL noteDB = new NoteSQL(ds);
             noteDB.nuke();
-            map.saveToDB(ds);
+            loader.saveToDB(ds);
             List<Note> retrieved = noteDB.getAllNotes();
-            assertEquals(map.getNotes(), retrieved);
+            assertEquals(loader.getNotes(), retrieved);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -46,14 +47,14 @@ public class AppTest {
 
     @Test
     public void readCsvToDbTest() {
-        NoteCsvMap map = new NoteCsvMap("test.csv");
-        System.out.println(map.getNotes());
+        FileLoader loader = new CsvLoader("test.csv");
+        System.out.println(loader.getNotes());
         try {
             NoteSQL noteDB = new NoteSQL(ds);
             noteDB.nuke();
-            map.saveToDB(ds);
+            loader.saveToDB(ds);
             List<Note> retrieved = noteDB.getAllNotes();
-            assertEquals(map.getNotes(), retrieved);
+            assertEquals(loader.getNotes(), retrieved);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -75,7 +75,25 @@ public class NoteSQL implements NoteDAO<Note> {
     }
 
     @Override
-    public List<Note> getNoteByCategory(String category) {
+    public List<Note> getLatest(Integer i) {
+        List<Note> results = new ArrayList<>();
+        String sql = "SELECT * FROM notes ORDER BY creationdatetime DESC ";
+        sql = sql + " LIMIT " + i;
+        try (Connection conn = ds.getConnected();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Note result = extractNoteFromRS(rs);
+                results.add(result);
+            }
+        } catch (SQLException e) {
+            logger.error("SQL Exception", e);
+        }
+        return results;
+    }
+
+    @Override
+    public List<Note> getNotesByCategory(String category) {
         List<Note> results = new ArrayList<>();
         String sql = "SELECT * FROM notes WHERE category LIKE ?";
         try (Connection conn = ds.getConnected();
@@ -169,7 +187,8 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public void deleteNote(Integer id) {
         String sql = "DELETE FROM notes WHERE id=?";
-        try (Connection conn = ds.getConnected(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnected();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int n = stmt.executeUpdate();
             if (n == 0) {
