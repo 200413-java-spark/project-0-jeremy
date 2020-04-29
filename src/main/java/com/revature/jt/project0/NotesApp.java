@@ -105,7 +105,7 @@ public class NotesApp {
                     System.out.println("Please enter a valid file name!");
                     System.exit(1);
                 }
-                String fileExt = fileName.substring(fileName.indexOf('.')).toLowerCase();
+                String fileExt = fileName.substring(fileName.indexOf('.')+1).toLowerCase();
                 FileLoader loader = new FileLoader();
                 switch (fileExt) {
                     case "csv":
@@ -123,8 +123,14 @@ public class NotesApp {
             }
 
             if (line.hasOption("r")) {
+                String readArg = line.getOptionValue("r");
+                if (readArg == null) {
+                    NoteSQL noteDB = new NoteSQL(ds);
+                    noteDB.getAllNotes().forEach(System.out::print);
+                    System.exit(1);
+                }
                 List<String> readArgs = Arrays.asList(line.getOptionValues("r"));
-                if (readArgs.size() == 0 || readArgs.contains("all")) {
+                if (readArgs == null || readArgs.contains("all")) {
                     NoteSQL noteDB = new NoteSQL(ds);
                     noteDB.getAllNotes().forEach(System.out::print);
                 }
