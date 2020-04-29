@@ -7,7 +7,7 @@ import com.revature.jt.project0.db.NoteSQL;
 import java.sql.SQLException;
 import java.util.List;
 
-public class FileLoader {
+public class FileLoader implements Runnable {
     protected List<Note> files;
     
     public FileLoader() {
@@ -20,5 +20,9 @@ public class FileLoader {
     public void saveToDB(NoteDataSource ds) throws SQLException {
         NoteSQL noteDB = new NoteSQL(ds);
         noteDB.insertNoteList(files);
+    }
+
+    public void run() {
+        // TODO
     }
 }
