@@ -8,6 +8,7 @@ import com.revature.jt.project0.file.CsvLoader;
 import com.revature.jt.project0.file.FileLoader;
 
 import java.io.Console;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -24,6 +25,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
+
 
 public class NotesApp {
     public static void main(String[] args) {
@@ -58,6 +65,7 @@ public class NotesApp {
                         + "argument values: all, latest (# of messages), category (category name).")
                 .build();
         Option nukeOption = new Option("nuke", "Reset db.");
+        Option webOption = new Option("w", "web", false, "Start the web app.");
         Option help = new Option("help", "Print this message.");
 
         Options options = new Options();
@@ -65,6 +73,7 @@ public class NotesApp {
         options.addOption(loadOption);
         options.addOption(readOption);
         options.addOption(nukeOption);
+        options.addOption(webOption);
         options.addOption(help);
 
         // command line parser
@@ -172,7 +181,28 @@ public class NotesApp {
                     NoteSQL noteDB = new NoteSQL(ds);
                     noteDB.nuke();
                     System.out.println("Database reset");
+                    System.exit(1);
                 }
+            }
+            if (line.hasOption("w")) {
+                String webappDirLocation = "src/main/webapp/";
+                Tomcat tomcat = new Tomcat();
+        
+                tomcat.setPort(8081);
+        
+                StandardContext ctx = (StandardContext) tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
+                System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
+        
+                // Declare an alternative location for your "WEB-INF/classes" dir
+                // Servlet 3.0 annotation will work
+                File additionWebInfClasses = new File("target/classes");
+                WebResourceRoot resources = new StandardRoot(ctx);
+                resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes",
+                        additionWebInfClasses.getAbsolutePath(), "/"));
+                ctx.setResources(resources);
+        
+                tomcat.start();
+                tomcat.getServer().await();
             }
             if (line.getArgs().length != 0) {
                 System.out.println("Unrecognized options: " + Arrays.toString(line.getArgs()));
@@ -184,6 +214,9 @@ public class NotesApp {
             logger.error("invalid arguments passed; ", e);
         } catch (SQLException e) {
             logger.error("SQL Exception", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("EXCEPTION", e);
         }
 
     }
