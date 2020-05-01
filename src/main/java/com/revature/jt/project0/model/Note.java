@@ -8,6 +8,7 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 
 // basic entity
+
 public class Note {
     @CsvBindByName(required = false)
     private Integer id;
