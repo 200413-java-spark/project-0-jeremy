@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AppTest {
-    private NoteDataSource ds;
+    private NoteSQL db;
 
     @Before
     public void initialize() throws IOException {
@@ -26,8 +26,7 @@ public class AppTest {
         Properties prop = new Properties(System.getProperties());
         prop.load(input);
         System.setProperties(prop);
-
-        ds = NoteDataSource.getInstance();
+        db = new NoteSQL(NoteDataSource.getInstance());
     }
 
     @Test
@@ -35,10 +34,9 @@ public class AppTest {
         FileLoader loader = new JsonLoader("test.json");
         System.out.println(loader.getNotes());
         try {
-            NoteSQL noteDB = new NoteSQL(ds);
-            noteDB.nuke();
-            loader.saveToDB(ds);
-            List<Note> retrieved = noteDB.getAllNotes();
+            db.nuke();
+            loader.saveToDB(db);
+            List<Note> retrieved = db.getAllNotes();
             assertEquals(loader.getNotes(), retrieved);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,10 +48,9 @@ public class AppTest {
         FileLoader loader = new CsvLoader("test.csv");
         System.out.println(loader.getNotes());
         try {
-            NoteSQL noteDB = new NoteSQL(ds);
-            noteDB.nuke();
-            loader.saveToDB(ds);
-            List<Note> retrieved = noteDB.getAllNotes();
+            db.nuke();
+            loader.saveToDB(db);
+            List<Note> retrieved = db.getAllNotes();
             assertEquals(loader.getNotes(), retrieved);
         } catch (SQLException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ public interface NoteDAO<N> {
     List<N> getAllNotes();
     List<N> getLatest(Integer i);
     List<N> getNotesByCategory(String category);
+    List<String> getCategories();
     void insertNote(N n);
     void insertNoteList(List<N> n);
     void updateNote(N n);

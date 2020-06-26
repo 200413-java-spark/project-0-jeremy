@@ -1,39 +1,49 @@
 package com.revature.jt.project0.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.h2.jdbcx.JdbcDataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.sql.DataSource;
 
 public class NoteDataSource {
-    private static final Logger logger = LoggerFactory.getLogger(NoteDataSource.class);
-    private static NoteDataSource instance;
-    private String url;
-    private String user;
-    private String password;
+    // private static final Logger logger = LoggerFactory.getLogger(NoteDataSource.class);
+    /*public NoteDataSource() {
 
-    private NoteDataSource() {
-        url = System.getProperty("db.url");
-        user = System.getProperty("db.user");
-        password = System.getProperty("db.password");
-        logger.debug("Initiating datasource...");
     }
 
-    public static NoteDataSource getInstance() {
-        if (instance == null) {
+    public NoteDataSource(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+
+    }*/
+
+    public static DataSource getInstance() {
+        /*if (instance == null) {
             instance = new NoteDataSource();
+        }*/
+        String url = System.getProperty("db.url");
+        String user = System.getProperty("db.user");
+        String password = System.getProperty("db.password");
+
+        JdbcDataSource ds = new JdbcDataSource();
+        try {
+            Class.forName("org.h2.Driver");
+            ds.setURL(url);
+            ds.setUser(user);
+            ds.setPassword(password);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return instance;
+        return ds;
+        // logger.debug("Initiating datasource...");
     }
 
-    public Connection getConnected() {
-        try {
-            return DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            logger.error("Error connecting to db", e);
-            throw new RuntimeException("Error connecting to db ", e);
-        }
-    }
+    /*
+     * public Connection getConnected() { try { conn = DriverManager.getConnection(url, user,
+     * password); } catch (SQLException e) { logger.error("Error connecting to db", e); throw new
+     * RuntimeException("Error connecting to db ", e); } return conn; }
+     * 
+     * public void closeConnection() { try { this.conn.close(); } catch (SQLException e) {
+     * logger.error("Error closing db", e); } }
+     */
 }

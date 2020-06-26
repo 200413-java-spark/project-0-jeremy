@@ -1,28 +1,31 @@
 package com.revature.jt.project0.file;
 
-import com.revature.jt.project0.model.Note;
-import com.revature.jt.project0.db.NoteDataSource;
 import com.revature.jt.project0.db.NoteSQL;
+import com.revature.jt.project0.model.Note;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class FileLoader implements Runnable {
-    protected List<Note> files;
-    
+    protected List<Note> noteList;
+
     public FileLoader() {
     }
 
     public List<Note> getNotes() {
-        return files;
+        return noteList;
     }
 
-    public void saveToDB(NoteDataSource ds) throws SQLException {
-        NoteSQL noteDB = new NoteSQL(ds);
-        noteDB.insertNoteList(files);
+    public void saveToDB(NoteSQL db) throws SQLException {
+        db.insertNoteList(noteList);
     }
 
     public void run() {
-        // TODO
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                System.out.println("NEW THREAD!");
+            }
+        });
     }
 }

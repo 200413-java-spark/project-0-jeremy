@@ -1,27 +1,27 @@
 package com.revature.jt.project0.db;
 
-import com.revature.jt.project0.db.NoteDataSource;
 import com.revature.jt.project0.model.Note;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.sql.Clob;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 public class NoteSQL implements NoteDAO<Note> {
-    private NoteDataSource ds;
+    private DataSource ds;
     private static final Logger logger = LoggerFactory.getLogger(NoteSQL.class);
 
-    public NoteSQL(NoteDataSource ds) {
+    public NoteSQL(DataSource ds) {
         this.ds = ds;
     }
 
@@ -43,8 +43,7 @@ public class NoteSQL implements NoteDAO<Note> {
     public Note getNote(Integer id) {
         Note result = new Note();
         String sql = "SELECT * FROM notes WHERE id=?";
-        try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -60,8 +59,8 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public List<Note> getAllNotes() {
         List<Note> results = new ArrayList<>();
-        String sql = "SELECT * FROM notes";
-        try (Connection conn = ds.getConnected();
+        String sql = "SELECT * FROM notes ORDER BY creationdatetime DESC";
+        try (Connection conn = ds.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -79,7 +78,7 @@ public class NoteSQL implements NoteDAO<Note> {
         List<Note> results = new ArrayList<>();
         String sql = "SELECT * FROM notes ORDER BY creationdatetime DESC ";
         sql = sql + " LIMIT " + i;
-        try (Connection conn = ds.getConnected();
+        try (Connection conn = ds.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -96,8 +95,7 @@ public class NoteSQL implements NoteDAO<Note> {
     public List<Note> getNotesByCategory(String category) {
         List<Note> results = new ArrayList<>();
         String sql = "SELECT * FROM notes WHERE category LIKE ?";
-        try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, category);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -112,11 +110,27 @@ public class NoteSQL implements NoteDAO<Note> {
     }
 
     @Override
+    public List<String> getCategories() {
+        List<String> results = new ArrayList<>();
+        String sql = "SELECT DISTINCT category FROM notes";
+        try (Connection conn = ds.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                String category = rs.getString("category");
+                results.add(category);
+            }
+        } catch (SQLException e) {
+            logger.error("SQL Exception", e);
+        }
+        return results;
+    }
+
+    @Override
     public void insertNote(Note note) {
         if (note.getId() == null) {
             String sql = "INSERT INTO notes (entry, category, creationdatetime) VALUES (?,?,?)";
-            try (Connection conn = ds.getConnected();
-                    PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, note.getEntry());
                 stmt.setString(2, note.getCategory());
                 stmt.setObject(3, note.getCreationDateTime());
@@ -126,10 +140,8 @@ public class NoteSQL implements NoteDAO<Note> {
                 logger.error("SQL Exception", e);
             }
         } else {
-            String sql =
-                    "INSERT INTO notes (id, entry, category, creationdatetime) VALUES (?,?,?,?)";
-            try (Connection conn = ds.getConnected();
-                    PreparedStatement stmt = conn.prepareStatement(sql)) {
+            String sql = "INSERT INTO notes (id, entry, category, creationdatetime) VALUES (?,?,?,?)";
+            try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, note.getId());
                 stmt.setString(2, note.getEntry());
                 stmt.setString(3, note.getCategory());
@@ -145,8 +157,7 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public void insertNoteList(List<Note> notes) {
         String sql = "INSERT INTO notes (entry, category, creationdatetime) VALUES (?,?,?)";
-        try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             for (Note note : notes) {
                 stmt.setString(1, note.getEntry());
@@ -168,8 +179,7 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public void updateNote(Note note) {
         String sql = "UPDATE notes SET entry=?, category=?, creationdatetime=? WHERE id=?";
-        try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, note.getEntry());
             stmt.setString(2, note.getCategory());
             stmt.setObject(3, note.getCreationDateTime());
@@ -187,8 +197,7 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public void deleteNote(Integer id) {
         String sql = "DELETE FROM notes WHERE id=?";
-        try (Connection conn = ds.getConnected();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ds.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int n = stmt.executeUpdate();
             if (n == 0) {
@@ -203,7 +212,7 @@ public class NoteSQL implements NoteDAO<Note> {
     @Override
     public void nuke() {
         String sql = "DELETE FROM notes";
-        try (Connection conn = ds.getConnected(); Statement stmt = conn.createStatement()) {
+        try (Connection conn = ds.getConnection(); Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
             logger.error("SQL Exception", e);

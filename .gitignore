@@ -1,12 +1,14 @@
-*.jar
 *.class
+*.jar
 *.db
 *.log
-.project
 .classpath
+.project
 
 .settings/
 .vscode/
-target/
 Faker/
+logs/
+target/
 tomcat*/
+.metals/

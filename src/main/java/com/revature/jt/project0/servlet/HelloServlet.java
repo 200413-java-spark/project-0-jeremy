@@ -2,6 +2,7 @@ package com.revature.jt.project0.servlet;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +24,9 @@ public class HelloServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        ServletContext ctx = req.getServletContext();
+        ctx.setAttribute("user", System.getProperty("user"));
+
         ServletOutputStream out = resp.getOutputStream();
         out.write("hello".getBytes());
         out.flush();

@@ -1,12 +1,15 @@
 # Project 0
 
 A command-line app that receives and displays note entries.
+Has an option to run an embedded Web server to interact with notes.
 
 ---
 
 ## build
 
->mvn clean package  
+```bash
+>mvn clean package
+```
 
 A jar file will be produced in the `target` directory.
 
@@ -14,7 +17,9 @@ A jar file will be produced in the `target` directory.
 
 ## usage
 
->java -jar target/project0-0.0.4-SNAPSHOT-jar-with-dependencies.jar \[arguments\]
+```bash
+> java -jar target/project0-0.0.5-SNAPSHOT-jar-with-dependencies.jar \[arguments\]
+```
 
 arguments:
 
@@ -22,3 +27,4 @@ arguments:
 - -r, --read: shows all notes currently stored in h2
 - -l, -load: opens a JSON file which contains note(s) to be loaded into the database
 - -nuke: resets database
+- -w: opens Web page that offers basic functionality to interact with notes
