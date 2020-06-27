@@ -12,7 +12,7 @@ html {
 }
 
 body {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   line-height: 1.618;
   max-width: 38em;
   margin: auto;
@@ -175,6 +175,7 @@ textarea:focus {
 
 textarea {
   width: 100%;
+  height: 100px;
 }
 
 .button,
@@ -250,11 +251,16 @@ fieldset {
   font-weight: 600;
 }
 
-.card-list {
-  margin-top: 4rem;
-}
-
-.card {
+.note-heading {
   padding: 0.5em;
   border-bottom: 1px solid #4a4a4a;
+}
+
+.note-card {
+  padding: 0.5em;
+  border-bottom: 1px solid #4a4a4a;
+}
+
+.entryarea {
+  padding-top: 2em;
 }

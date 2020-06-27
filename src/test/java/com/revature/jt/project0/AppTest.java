@@ -1,11 +1,14 @@
 package com.revature.jt.project0;
 
-import com.revature.jt.project0.model.Note;
 import com.revature.jt.project0.db.NoteDataSource;
 import com.revature.jt.project0.db.NoteSQL;
 import com.revature.jt.project0.file.CsvLoader;
 import com.revature.jt.project0.file.FileLoader;
 import com.revature.jt.project0.file.JsonLoader;
+import com.revature.jt.project0.model.Note;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +17,6 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
 
 public class AppTest {
     private NoteSQL db;
@@ -29,6 +30,7 @@ public class AppTest {
         db = new NoteSQL(NoteDataSource.getInstance());
     }
 
+    @Ignore
     @Test
     public void readJsonToDbTest() {
         FileLoader loader = new JsonLoader("test.json");
@@ -43,6 +45,7 @@ public class AppTest {
         }
     }
 
+    @Ignore
     @Test
     public void readCsvToDbTest() {
         FileLoader loader = new CsvLoader("test.csv");
